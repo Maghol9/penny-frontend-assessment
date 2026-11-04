@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CrApiService } from '../../api/cr-api.service';
 import { SessionService } from '../../session/session.service';
@@ -7,8 +7,7 @@ import { idle, loading, ViewState } from '../../common/view-state';
 
 /**
  * Change Request LIST page. Loads the caller's CRs and renders loading / loaded / empty / error
- * states, plus a status filter. The load + state handling are provided as the pattern; the status
- * filter (`visibleRows`) is yours to complete.
+ * states, plus a status filter. Previous in-flight loads cannot overwrite newer data.
  */
 @Component({
 	selector: 'app-cr-list',
@@ -16,12 +15,13 @@ import { idle, loading, ViewState } from '../../common/view-state';
 	imports: [CommonModule],
 	templateUrl: './cr-list.component.html',
 })
-export class CrListComponent implements OnInit {
+export class CrListComponent implements OnInit, OnDestroy {
 	@Output() select = new EventEmitter<string>();
 
 	state: ViewState<CrSummary[]> = idle();
 	statusFilter: CrStatus | 'ALL' = 'ALL';
 	readonly statuses: (CrStatus | 'ALL')[] = ['ALL', 'DRAFT', 'SUBMITTED', 'PENDING_APPROVAL', 'APPROVED', 'APPLIED', 'REJECTED', 'CANCELLED'];
+	private loadVersion = 0;
 
 	constructor(private readonly api: CrApiService, private readonly session: SessionService) {}
 
@@ -29,13 +29,23 @@ export class CrListComponent implements OnInit {
 		void this.load();
 	}
 
+	ngOnDestroy(): void {
+		this.loadVersion++;
+	}
+
 	async load(): Promise<void> {
+		const version = ++this.loadVersion;
+		const user = this.session.user;
 		this.state = loading();
 		try {
-			const rows = await this.api.listChangeRequests(this.session.user);
-			this.state = { status: rows.length ? 'loaded' : 'empty', data: rows };
+			const rows = await this.api.listChangeRequests(user);
+			if (version === this.loadVersion && this.session.user === user) {
+				this.state = { status: rows.length ? 'loaded' : 'empty', data: rows };
+			}
 		} catch (err) {
-			this.state = { status: 'error', data: null, error: (err as Error).message };
+			if (version === this.loadVersion && this.session.user === user) {
+				this.state = { status: 'error', data: null, error: (err as Error).message };
+			}
 		}
 	}
 
@@ -46,7 +56,6 @@ export class CrListComponent implements OnInit {
 	/** Rows to render, after applying the active status filter. */
 	get visibleRows(): CrSummary[] {
 		const rows = this.state.data ?? [];
-		// TODO: narrow `rows` by `this.statusFilter` ('ALL' shows everything).
-		return rows;
+		return this.statusFilter === 'ALL' ? rows : rows.filter((row) => row.status === this.statusFilter);
 	}
 }
