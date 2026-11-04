@@ -17,7 +17,7 @@ HTML/CSS.
 nvm use            # Node 18.20.3
 npm ci             # uses .npmrc (legacy-peer-deps) — please keep it
 npm start          # ng serve -> http://localhost:4200  (run the UI to click through / record your demo)
-npm test           # Jest — two tests fail on purpose; fixing them is task 1
+npm test           # Jest (run after installing dependencies; verify locally)
 npm run build      # ng build (production)
 npm run lint
 npm run format
@@ -49,17 +49,20 @@ offer/enable an action the current user is actually permitted to perform.
 Approve/Reject act on a `PENDING_APPROVAL` CR. You consume these statuses; you don't drive backend
 transitions.
 
-## Where to work
+## Implemented areas
 
 - `src/components/cr-list/cr-list.component.{ts,html}` — list page; the **status filter**
-  (`visibleRows`) is a TODO.
-- `src/components/cr-detail/cr-detail.component.{ts,html}` — detail page; **timeline ordering**,
-  **permission-aware** `canApprove`/`canReject`, the **approve/reject actions**, and **reject-reason
-  validation** are yours.
-- `src/components/diff.util.ts` — the preview-panel diff; its change-detection has a defect surfaced by
-  `diff.spec.ts`.
+  (`visibleRows`) is implemented.
+- `src/components/cr-detail/cr-detail.component.{ts,html}` — detail page; **chronological timeline**,
+  **permission-aware** `canApprove`/`canReject`, **approve/reject actions**, and **reject-reason validation**
+  are implemented.
+- `src/components/diff.util.ts` — the preview-panel diff; quantity-, description-, and price-only
+  changes are now classified correctly.
 
-The visible tests are a starting point, not the full specification.
+The original tests have been expanded with coverage for the implemented behavior.
+
+For a complete English setup and implementation walkthrough, see [`SOLUTION_GUIDE.md`](./SOLUTION_GUIDE.md).
+See [`IMPLEMENTATION_NOTES.md`](./IMPLEMENTATION_NOTES.md) for design choices, testing scope, and AI disclosure.
 
 ## Testing components
 
@@ -79,9 +82,9 @@ src/
     diff.util.ts                   # baseline-vs-proposed line-item diff
     cr-list/cr-list.component.{ts,html}
     cr-detail/cr-detail.component.{ts,html}
-    diff.spec.ts                            # one failing case to start from
-    cr-list/cr-list.component.spec.ts       # passing example (loaded / empty render)
-    cr-detail/cr-detail.component.spec.ts   # one failing case to start from
+    diff.spec.ts                            # pure regression tests for the diff
+    cr-list/cr-list.component.spec.ts       # rendered list/filter/state tests
+    cr-detail/cr-detail.component.spec.ts   # rendered actions/permissions/state tests
 ```
 
 ## A note on AI tools
