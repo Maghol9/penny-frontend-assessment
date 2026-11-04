@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CrListComponent } from '../components/cr-list/cr-list.component';
 import { CrDetailComponent } from '../components/cr-detail/cr-detail.component';
 import { SessionService } from '../session/session.service';
 import { users } from '../api/fixtures';
+import { CrApiService } from '../api/cr-api.service';
 
 /**
  * Demo app shell that hosts the list + detail screens so you can click through the UI in a browser
@@ -19,12 +20,13 @@ import { users } from '../api/fixtures';
 	templateUrl: './app.component.html',
 })
 export class AppComponent {
+	@ViewChild(CrListComponent) list?: CrListComponent;
 	readonly users = users;
 	readonly userKeys = Object.keys(users);
 	selectedId: string | null = 'CR-1';
 	show = true;
 
-	constructor(public readonly session: SessionService) {}
+	constructor(public readonly session: SessionService, private readonly api: CrApiService) {}
 
 	switchUser(key: string): void {
 		this.session.user = users[key];
@@ -33,6 +35,16 @@ export class AppComponent {
 
 	onSelect(id: string): void {
 		this.selectedId = id;
+	}
+
+	onChanged(): void {
+		void this.list?.load();
+	}
+
+	/** Demo-only control for an explicit, reproducible list failure. */
+	simulateListError(): void {
+		this.api.failNext = true;
+		void this.list?.load();
 	}
 
 	/** Destroy + recreate the panes so they re-load as the newly selected user. */

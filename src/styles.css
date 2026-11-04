@@ -55,3 +55,135 @@ button:disabled {
 .cr-diff__row[data-kind='removed'] {
 	background: #fdecea;
 }
+
+/* Straightforward responsive reviewer layout (no additional UI packages). */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+.cr-list,
+.cr-detail {
+	min-width: 0;
+	padding: 1rem;
+	border: 1px solid #e0e5ea;
+	border-radius: 0.5rem;
+	background: #fff;
+}
+.cr-list__header,
+.cr-detail__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+h1,
+h2,
+h3 {
+	margin-top: 0;
+}
+h2 {
+	font-size: 1.3rem;
+}
+h3 {
+	font-size: 1.05rem;
+}
+.cr-list__open {
+	background: none;
+	color: #0458a1;
+	border: 0;
+	cursor: pointer;
+	text-decoration: underline;
+	font: inherit;
+}
+.cr-status {
+	display: inline-block;
+	padding: 0.2rem 0.4rem;
+	border-radius: 0.25rem;
+	background: #eef0f4;
+	font-size: 0.78rem;
+	font-weight: 600;
+}
+.cr-status[data-status='PENDING_APPROVAL'] {
+	background: #fff1cf;
+}
+.cr-status[data-status='APPROVED'],
+.cr-status[data-status='APPLIED'] {
+	background: #e4f5e9;
+}
+.cr-status[data-status='REJECTED'],
+.cr-status[data-status='CANCELLED'] {
+	background: #fde6e6;
+}
+.cr-list__filter,
+.cr-actions__reason {
+	display: block;
+	max-width: 100%;
+	margin-top: 0.3rem;
+	padding: 0.45rem;
+	border: 1px solid #b6c1cb;
+	border-radius: 0.25rem;
+	font: inherit;
+}
+.cr-actions__reason {
+	width: 100%;
+	min-height: 5rem;
+}
+.cr-detail__totals {
+	width: 100%;
+	margin: 0 0 0.8rem;
+}
+.cr-diff,
+.cr-timeline,
+.cr-actions {
+	margin-top: 1.3rem;
+	padding-top: 1rem;
+	border-top: 1px solid #e8e8e8;
+}
+.cr-diff__table {
+	display: block;
+	overflow-x: auto;
+}
+.cr-timeline__entry {
+	margin: 0.5rem 0;
+}
+.cr-timeline__action {
+	font-weight: 600;
+}
+.cr-timeline__by,
+.cr-timeline__at,
+.cr-timeline__note {
+	margin-left: 0.6rem;
+}
+.cr-actions__approve,
+.cr-actions__reject-btn {
+	margin-top: 0.5rem;
+	cursor: pointer;
+}
+.cr-actions__reject {
+	max-width: 28rem;
+	margin-top: 0.8rem;
+}
+.cr-actions__unavailable,
+.cr-list__filtered-empty {
+	color: #586374;
+}
+@media (max-width: 950px) {
+	.app-layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.app-header {
+		flex-wrap: wrap;
+	}
+}
+
+.app-header__controls {
+	display: flex;
+	align-items: center;
+	gap: 0.8rem;
+	flex-wrap: wrap;
+}
+.app-header__simulate-error {
+	font-size: 0.85rem;
+}
