@@ -141,7 +141,12 @@ describe('CrDetailComponent additional error and navigation scenarios', () => {
 		const fixture = await create(users.approver, 'CR-1');
 		const api = TestBed.inject(CrApiService);
 		api.failNext = true;
-		jest.spyOn(api, 'getChangeRequest').mockRejectedValueOnce(new Error('Refresh unavailable'));
+		jest.spyOn(api, 'getChangeRequest').mockImplementationOnce(
+			() =>
+				new Promise((_, reject) => {
+					setTimeout(() => reject(new Error('Refresh unavailable')), 0);
+				}),
+		);
 		const button: HTMLButtonElement = fixture.nativeElement.querySelector('.cr-actions__approve');
 		button.click();
 		await flush();

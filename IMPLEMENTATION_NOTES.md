@@ -33,7 +33,7 @@ A monotonically increasing request version prevents an older asynchronous load f
 
 The expanded Jest/TestBed tests check rendered list rows, status filtering, empty/loading/error/retry states, org scoping, diff categories, totals/delta, timeline ordering, read-only access, non-pending status, cross-org access, rejection validation, duplicate-action prevention, slow responses, and action-error reconciliation. Pure tests also cover added/removed/unchanged/changed line items.
 
-**Verification note:** The project still needs a successful `npm ci`, `npm test`, `npm run build`, `npm run lint`, and `npm run format:check` (if a formatting check script is added) in a Node.js 18.20.3 environment before submission. Automated tests and build were not executable in the preparation environment because project dependencies were unavailable; do not claim they passed until you run them locally.
+**Local verification (4 November 2026):** On my Windows machine using Node.js v26.13.0, I ran `npm.cmd test -- --runInBand` (**22 tests passed across 3 suites**), `npm.cmd run typecheck`, `npm.cmd run build`, and `npm.cmd run lint`; all completed successfully. In the browser, I also verified status filtering, read-only permissions, rejection-reason validation, successful Reject and Approve flows, and list-load error/Retry behavior. Since the repository declares Node.js `>=18.20.0 <19`, the final clean-install check should also be repeated using the recommended Node.js 18.20.3 (`npm ci`, tests, build, typecheck, and lint). The current `package.json` provides `format` but not `format:check`; a formatting check has not yet been recorded.
 
 ## 5. Assumptions and trade-offs
 
